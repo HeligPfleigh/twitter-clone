@@ -7,6 +7,7 @@ import './config/db';
 import constants from './config/constants';
 import typeDefs from './graphql/schema';
 import resolvers from './graphql/resolvers';
+import mocks from './mocks';
 
 const app = express();
 
@@ -25,10 +26,13 @@ app.use(constants.GRAPHQL_PATH, graphqlExpress({
   schema,
 }));
 
-app.listen(constants.PORT, (err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(`App listen on port: ${constants.PORT}`);
-  }
+mocks().then(() => {
+  app.listen(constants.PORT, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(`App listen on port: ${constants.PORT}`);
+    }
+  });
 });
+
