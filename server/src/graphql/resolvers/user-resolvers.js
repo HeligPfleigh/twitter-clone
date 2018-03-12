@@ -1,13 +1,16 @@
 import User from '../../models/User';
 
 export default {
-  signup: (_, {
+  signup: async (_, {
     fullName, username, password, email, avatar,
   }) => {
     const [firstName, ...lastName] = fullName.split(' ');
-    return User.create({
+    const user = await User.create({
       firstName, lastName, username, password, email, avatar,
     });
+    return {
+      token: user.createToken(),
+    };
   },
   login: async (_, { email, password }) => {
     const user = await User.findOne({ email });
