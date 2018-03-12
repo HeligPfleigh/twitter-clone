@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import Tweet from '../../models/Tweet';
 import { requireAuth } from '../../services/auth';
 
@@ -21,7 +22,7 @@ export default {
   createTweet: async (_, args, { user }) => {
     try {
       await requireAuth(user);
-      return Tweet.create(args);
+      return Tweet.create({ ...args, user: user._id });
     } catch (e) {
       throw e;
     }
@@ -29,7 +30,17 @@ export default {
   updateTweet: async (_, { _id, ...args }, { user }) => {
     try {
       await requireAuth(user);
-      return Tweet.findByIdAndUpdate(_id, args, { new: true });
+
+      const tweet = await Tweet.findOne({ _id, user: user._id });
+      if (!tweet) {
+        throw new Error('Not found!');
+      }
+
+      Object.entries(args).forEach(([key, value]) => {
+        tweet[key] = value;
+      });
+
+      return tweet.save();
     } catch (e) {
       throw e;
     }
@@ -37,12 +48,26 @@ export default {
   deleteTweet: async (_, { _id }, { user }) => {
     try {
       await requireAuth(user);
-      await Tweet.findByIdAndRemove(_id);
+
+      const tweet = await Tweet.findOne({ _id, user: user._id });
+      if (!tweet) {
+        throw new Error('Not found!');
+      }
+      await tweet.remove();
+
       return {
         message: 'Delete Success!',
       };
     } catch (err) {
       throw err;
+    }
+  },
+  getUserTweets: async (_, args, { user }) => {
+    try {
+      await requireAuth(user);
+      return Tweet.find({ user: user._id }).sort({ createdAt: -1 });
+    } catch (e) {
+      throw e;
     }
   },
 };
