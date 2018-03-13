@@ -7,6 +7,7 @@ import {
 } from 'react-navigation-redux-helpers';
 import { FontAwesome } from '@expo/vector-icons';
 
+import AuthenticationScreen from './screens/AuthenticationScreen';
 import HomeScreen from './screens/HomeScreen';
 import ExploreScreen from './screens/ExploreScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
@@ -102,12 +103,16 @@ class AppNavigator extends Component {
       state: this.props.nav,
       addListener
     });
+    if(!this.props.user.isAuthenticated) {
+      return <AuthenticationScreen />
+    }
     return <AppMainNav navigation={nav} />
   }
 }
 
 export default connect(state => ({
   nav: state.nav,
+  user: state.user,
 }))(AppNavigator);
 
 export const router = AppMainNav.router;
