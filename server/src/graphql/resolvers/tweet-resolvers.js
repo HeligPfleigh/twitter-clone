@@ -11,9 +11,8 @@ export default {
       throw e;
     }
   },
-  getTweets: async (_, args, { user }) => {
+  getTweets: async () => {
     try {
-      await requireAuth(user);
       return Tweet.find({}).sort({ createdAt: -1 });
     } catch (e) {
       throw e;
