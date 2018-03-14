@@ -9,7 +9,7 @@ const app = express();
 
 middlewares(app);
 
-mocks().then(() => {
+// mocks().then(() => {
   app.listen(constants.PORT, (err) => {
     if (err) {
       console.log(err);
@@ -17,5 +17,5 @@ mocks().then(() => {
       console.log(`App listen on port: ${constants.PORT}`);
     }
   });
-});
+// });
 
